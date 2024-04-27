@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel= "stylesheet" href = "style.css">
+</head>
+<body>
+
+<!--adds the magnifying glass image to the right-->
+<div class="card">
+    <div class='search'>
+        <!--creates the search bar box-->
+        <input type="text" placeholder="enter city name"
+        spellcheck="false">
+        <button><img src="images/search.png"></button>
+    </div>
+    <!--Shows invalid city name if name of city entered was wrong-->
+    <div class="error">
+        <p>Invalid City Name</p>
+    </div>
+    
+    <div class="weather">
+        <!--adds rain weather icon-->
+        <img src="images/rain.png" class="weather-icon">
+        <!--adds temperature and city-->
+        <h1 class = "temp">checking</h1>
+        <h2 class="city">please wait</h2>
+        <div class="details">
+            <div class="col">
+                <!--adds image and value of humidity-->
+                <img src="images/humidity.png">
+                <div>
+                    <p class="humidity">loading</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <!--adds image and value of wind-->
+                <img src="images/wind.png">
+                <div>
+                    <p class="wind">loading</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                <!--start of JavaScript code-->
+<script>
+    //initialised the variables holding the api key and url
+const apiKey = 'c46e63734ad2f0b3b617ebd7c20dd57e';
+const apiUrl = 'https://api.openweathermap.org/data/2.5/weather?units=metric&q=';
+    //initialised variables containing the following values
+const searchBox = document.querySelector(".search input");
+const searchButton = document.querySelector(".search button");
+const weatherIcon = document.querySelector(".weather-icon");
+
+//display nothing by default
+document.querySelector(".weather").style.display = "none";
+
+// hide error message initially
+document.querySelector(".error").style.display = "none";
+
+//finally displays the weather
+async function showWeather(){
+    if (document.querySelector(".weather").style.display === "none"){
+        document.querySelector(".weather").style.display = "block";
+    }
+} //end of function
+
+
+    // made asynchronous function to get the weather details from the API
+async function getWeather(city){
+    const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+    // if city name is not found
+    if(response.status == 404){
+        // displays error message
+        document.querySelector(".error").style.display = 'block';
+        // stops any weather from displaying
+        document.querySelector(".weather").style.display = 'none';
+    // else, do the following with the information collected from the API
+    }else{
+        document.querySelector(".error").style.display = 'none';
+        var data = await response.json();
+// additional stuff on how to display the weather information
+document.querySelector('.temp').innerHTML = Math.round(data.main.temp) + '°c';
+document.querySelector('.city').innerHTML = data.name;
+document.querySelector('.humidity').innerHTML = data.main.humidity + '%';
+document.querySelector('.wind').innerHTML = data.wind.speed + 'km/h';
+// when and what image to display based on the weather
+if(data.weather[0].main == "Clouds"){
+    weatherIcon.src = "images/clouds.png";
+}
+else if(data.weather[0].main == "Clear"){
+    weatherIcon.src = "images/clear.png";
+}
+else if(data.weather[0].main == "Rain"){
+    weatherIcon.src = "images/rain.png";
+}
+else if(data.weather[0].main == "Drizzle"){
+    weatherIcon.src = "images/drizzle.png";
+}
+else if(data.weather[0].main == "Mist"){
+    weatherIcon.src = "images/mist.png";
+}
+
+document.querySelector("error").style.display = 'none';
+    }
+} // end of function
+
+// makes it so that you can press enter to search for the weather 
+document.addEventListener('keyup', function(event){
+    if (event.keyCode == 13){
+        searchButton.click();
+    }
+});
+// calls the function above with the string inputted into the search box, upon click of the button
+searchButton.addEventListener('click', () => {
+    getWeather(searchBox.value);
+    // start to display weather after obtaining it
+    showWeather();
+});
+getWeather();
+</script>
+</body>
+</html>
