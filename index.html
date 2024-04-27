@@ -83,6 +83,8 @@ async function getWeather(city){
     }else{
         document.querySelector(".error").style.display = 'none';
         var data = await response.json();
+
+        console.log(data);
 // additional stuff on how to display the weather information
 document.querySelector('.temp').innerHTML = Math.round(data.main.temp) + '°c';
 document.querySelector('.city').innerHTML = data.name;
@@ -121,7 +123,8 @@ searchButton.addEventListener('click', () => {
     // start to display weather after obtaining it
     showWeather();
 });
-getWeather();
+
+
 </script>
 </body>
 </html>
